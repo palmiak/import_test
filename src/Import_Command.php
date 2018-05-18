@@ -94,7 +94,7 @@ class Import_Command extends WP_CLI_Command {
 		$wp_import = new WP_Import;
 
 		// Clear this every time, so we can import from multiple files
-		$wp_import->processed_posts = array();
+		$wp_import->processed_posts = $this->processed_posts;
 		$import_data = $wp_import->parse( $file );
 		if ( is_wp_error( $import_data ) )
 			return $import_data;
@@ -165,7 +165,7 @@ class Import_Command extends WP_CLI_Command {
 
 		$GLOBALS['wp_cli_import_current_file'] = basename( $file );
 		$wp_import->import( $file );
-
+		$wp_import->processed_posts = $this->processed_posts;
 		return true;
 	}
 
