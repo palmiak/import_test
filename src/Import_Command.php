@@ -101,7 +101,6 @@ class Import_Command extends WP_CLI_Command {
 			return $import_data;
 
 		$url_slug = sanitize_title( $import_data['base_url'] );
-		var_dump( $import_data );
 		if( isset( $this->processed_posts[$url_slug] ) ) {
 			$wp_import->processed_posts = $this->processed_posts[$url_slug];
 		} else {
@@ -179,7 +178,6 @@ class Import_Command extends WP_CLI_Command {
 		if( isset( $this->processed_posts[$url_slug] ) ) {
 			$this->processed_posts[$url_slug] += $wp_import->processed_posts;
 		} else {
-			$wp_import->processed_posts = array();
 			$this->processed_posts[$url_slug] = $wp_import->processed_posts;
 		}
 
