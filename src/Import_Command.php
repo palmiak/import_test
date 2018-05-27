@@ -90,15 +90,21 @@ class Import_Command extends WP_CLI_Command {
 	 * Imports a WXR file.
 	 */
 	private function import_wxr( $file, $args ) {
-
-		$wp_import = new WP_Import;
-
-		// Clear this every time, so we can import from multiple files
-		$wp_import->processed_posts = $this->processed_posts;
+				$wp_import = new WP_Import;
+		
 		$import_data = $wp_import->parse( $file );
+
 		if ( is_wp_error( $import_data ) )
 			return $import_data;
 
+		$url_slug = sanitize_title( $import_data['base_url'] );
+
+		if( isset( $this->processed_posts[$url_slug] ) ) {
+			$wp_import->processed_posts = $this->processed_posts[$url_slug];
+		} else {
+			$wp_import->processed_posts = array();
+		}
+		
 		// Prepare the data to be used in process_author_mapping();
 		$wp_import->get_authors_from_import( $import_data );
 
@@ -165,7 +171,9 @@ class Import_Command extends WP_CLI_Command {
 
 		$GLOBALS['wp_cli_import_current_file'] = basename( $file );
 		$wp_import->import( $file );
-		$wp_import->processed_posts = $this->processed_posts;
+
+		$this->processed_posts[$url_slug] += $wp_import->processed_posts;
+
 		return true;
 	}
 
