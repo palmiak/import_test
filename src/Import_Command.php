@@ -89,8 +89,11 @@ class Import_Command extends WP_CLI_Command {
 	/**
 	 * Imports a WXR file.
 	 */
+	/**
+	 * Imports a WXR file.
+	 */
 	private function import_wxr( $file, $args ) {
-				$wp_import = new WP_Import;
+		$wp_import = new WP_Import;
 		
 		$import_data = $wp_import->parse( $file );
 
@@ -98,7 +101,7 @@ class Import_Command extends WP_CLI_Command {
 			return $import_data;
 
 		$url_slug = sanitize_title( $import_data['base_url'] );
-
+		var_dump( $import_data );
 		if( isset( $this->processed_posts[$url_slug] ) ) {
 			$wp_import->processed_posts = $this->processed_posts[$url_slug];
 		} else {
@@ -172,11 +175,16 @@ class Import_Command extends WP_CLI_Command {
 		$GLOBALS['wp_cli_import_current_file'] = basename( $file );
 		$wp_import->import( $file );
 
-		$this->processed_posts[$url_slug] += $wp_import->processed_posts;
+		
+		if( isset( $this->processed_posts[$url_slug] ) ) {
+			$this->processed_posts[$url_slug] += $wp_import->processed_posts;
+		} else {
+			$wp_import->processed_posts = array();
+			$this->processed_posts[$url_slug] = $wp_import->processed_posts;
+		}
 
 		return true;
 	}
-
 	public function filter_set_image_sizes( $sizes ) {
 		// Return null here to prevent the core image resizing logic from running.
 		return null;
